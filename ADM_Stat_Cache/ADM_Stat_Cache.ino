@@ -125,35 +125,30 @@
 	const int numCaReadings = 3;
 	const int numMhReadings = 3;
 	const int numTmReadings = 9;
-	const int numPvReadings = 3;
 	int gaReadings[numGaReadings];      // the readings from the GPS.angle
 	int baReadings[numBaReadings];      // the readings from the bmpAltitude
 	int gdReadings[numGdReadings];      // the readings from the grade
 	int caReadings[numCaReadings];      // the readings from the camber
 	int mhReadings[numMhReadings];      // the readings from the magHeading
 	int tmReadings[numTmReadings];      // the readings from the temperature
-	int pvReadings[numPvReadings];      // the readings from the potentiometer
 	int gaReadIndex = 0;              // the index of the current reading
 	int baReadIndex = 0;              // the index of the current reading
 	int gdReadIndex = 0;              // the index of the current reading
 	int caReadIndex = 0;              // the index of the current reading
 	int mhReadIndex = 0;              // the index of the current reading
 	int tmReadIndex = 0;              // the index of the current reading
-	int pvReadIndex = 0;              // the index of the current reading
 	int gaTotal = 0;                  // the running total
 	int baTotal = 0;                  // the running total
 	int gdTotal = 0;                  // the running total
 	int caTotal = 0;                  // the running total
 	int mhTotal = 0;                  // the running total
 	int tmTotal = 0;                  // the running total
-	int pvTotal = 0;                  // the running total
 	int gaAverage = 0;                // the average
 	int baAverage = 0;                // the average
 	int gdAverage = 0;                // the average
 	int caAverage = 0;                // the average
 	int mhAverage = 0;                // the average
 	int tmAverage = 0;                // the average
-	int pvAverage = 0;                // the average
 
 // Accel calibration for calculating G Force - using simple calibration method       
 	int xRawMin = -121.85;
@@ -270,8 +265,6 @@ void setup() {
         mhReadings[thisReading] = 0;    
           for (int thisReading = 0; thisReading < numTmReadings; thisReading++)
         tmReadings[thisReading] = 0; 
-          for (int thisReading = 0; thisReading < numPvReadings; thisReading++)
-        pvReadings[thisReading] = 0; 
         
 // See if the card is present and can be initialized:
 	if (!SD.begin(chipSelect,11,12,13)) {
@@ -298,7 +291,7 @@ void setup() {
 	Serial.println(filename);
   
 // Write heading in file
-	logFile.println("GPS Time,GPS Date,Satellites,Fix Quality,Latitude,Longitude,GPS Altitude,GPS Speed,GPS Course,Xaccel,Yaccel,Zaccel,Temperature,Average Grade,Grade,Camber,Heading,Drift,BMP Altitude,Brakes,Max Speed,Distance Traveled,Variometer,GyroX,GyroY,GyroZ");
+	logFile.println("GPS Time,GPS Date,Satellites,Fix Quality,Latitude,Longitude,GPS Altitude,GPS Speed,GPS Course,Xaccel,Yaccel,Zaccel,Temperature,Average Grade,Grade,Camber,Heading,Steering Angle,BMP Altitude,Brakes,Max Speed,Distance Traveled,Variometer,GyroX,GyroY,GyroZ");
 	logFile.flush();
   
 // Connect to the GPS at the desired rate, set options
@@ -486,7 +479,7 @@ void loop() {
         
 // Read from the potentiometer and map 10 bit values to degrees        
         potVal = analogRead(potPin);
-        potVal = map(potVal, 0, 1023, 0, 190); // Potentiometer has range of +- 114 degrees
+        potVal = map(potVal, 0, 1023, 0, 190); // Potentiometer has range of +- 95 degrees
         
 // Low pass filter
         fXa = acc_event.acceleration.x * accelAlpha + (fXa * (1.0 - accelAlpha));
@@ -591,7 +584,6 @@ void loop() {
 	caTotal = caTotal - caReadings[caReadIndex];
 	mhTotal = mhTotal - mhReadings[mhReadIndex];  
 	tmTotal = tmTotal - tmReadings[tmReadIndex];
-	pvTotal = pvTotal - pvReadings[pvReadIndex];
         // Read from the sensor:
 	gaReadings[gaReadIndex] = GPS.angle;
 	baReadings[baReadIndex] = alt;
@@ -599,14 +591,12 @@ void loop() {
 	caReadings[caReadIndex] = kalRoll; //camber;
 	mhReadings[mhReadIndex] = magHeading;  
 	tmReadings[tmReadIndex] = temperature;
-	pvReadings[pvReadIndex] = potVal;
 	gaTotal = gaTotal + gaReadings[gaReadIndex];
 	baTotal = baTotal + baReadings[baReadIndex];
 	gdTotal = gdTotal + gdReadings[gdReadIndex];
 	caTotal = caTotal + caReadings[caReadIndex];
 	mhTotal = mhTotal + mhReadings[mhReadIndex];  
 	tmTotal = tmTotal + tmReadings[tmReadIndex];
-	pvTotal = pvTotal + pvReadings[pvReadIndex];
         // Advance to the next position in the array:
 	gaReadIndex = gaReadIndex + 1;
 	baReadIndex = baReadIndex + 1;
@@ -614,7 +604,6 @@ void loop() {
 	caReadIndex = caReadIndex + 1;
 	mhReadIndex = mhReadIndex + 1;  
 	tmReadIndex = tmReadIndex + 1;
-	pvReadIndex = pvReadIndex + 1;
         // At the end of the array wrap around to the beginning
 	if (gaReadIndex >= numGaReadings)
 	gaReadIndex = 0;
@@ -628,8 +617,6 @@ void loop() {
 	mhReadIndex = 0;    
 	if (tmReadIndex >= numTmReadings)
 	tmReadIndex = 0;    
-	if (pvReadIndex >= numPvReadings)
-	pvReadIndex = 0;   
         // Calculate the average:
 	gaAverage = gaTotal / numGaReadings;
 	baAverage = baTotal / numBaReadings;
@@ -637,11 +624,10 @@ void loop() {
 	caAverage = caTotal / numCaReadings;
 	mhAverage = mhTotal / numMhReadings;  
 	tmAverage = tmTotal / numTmReadings;
-	pvAverage = pvTotal / numPvReadings;
         
 // Calculate steering angle (-95 to 95, because the pot has 190 degrees of sweep after pulley ratio)
         // Pot centered on steering angle of 0
-        steerAngle = pvAverage-95;
+        steerAngle = (potVal-95);
 
 // Calculate max speed
         if (maxSpeed<(GPS.speed*(1.15078+speedoCal))){
@@ -658,7 +644,7 @@ void loop() {
 // Calculate average grade
         if (origLat!=0 && origAlt!=0){         
         float tempDistance = calc_dist(origLat,origLon,GPS.latitude,GPS.longitude);
-        float tempVertical = origAlt-baAverage; 
+        float tempVertical = baAverage-origAlt; 
         tempDistance*=5280; // Converting fractions of miles back into feet
         averageGrade = (tempVertical/tempDistance)*100; // Slope to percent
         }
@@ -675,10 +661,10 @@ void loop() {
         // Brake light on center pixel. 
         brakesOn = false;
         
-        // Switch if statements when brake lever return button is present
+        // Switch if statements when using brake lever return button 
         //buttonState = digitalRead(buttonPin);
         //if (buttonState != HIGH){
-        if (yAccel<-.1){
+        if (yAccel<-.375){ 
           
         brakesOn = true;
         }

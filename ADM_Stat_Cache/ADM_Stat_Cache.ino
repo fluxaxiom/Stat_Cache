@@ -62,7 +62,7 @@
 // Set the pins used
 	#define chipSelect 10
 	#define ledPin 25
-        #define potPin 14
+        int potPin = 14;
         #define buttonPin 12
 	#define numPixels 7
 
@@ -248,11 +248,10 @@ void setup() {
 	Serial.println("Initializing");
   
 // Initialize
-	analogReference(EXTERNAL);  //use external reference voltage (3,3V)
 	delay(2000);
 	Wire.begin();
 	initSensors();
-	pixels.begin(); // This initializes the NeoPixel library. 
+	pixels.begin(); 
         gyr.begin(); 
       
 // Enable auto-range
@@ -261,9 +260,7 @@ void setup() {
         acc.enableAutoRange(true);
 
 // Set pin modes
-	pinMode(chipSelect, OUTPUT);
-        pinMode(potPin, INPUT);     
-        pinMode(buttonPin, INPUT);     
+	pinMode(chipSelect, OUTPUT);    
 
 //Initialize smoothing variables
           for (int thisReading = 0; thisReading < numGaReadings; thisReading++)
@@ -639,8 +636,8 @@ void loop() {
         potVal = map(potVal, 0, 1023, 0, 190); // Potentiometer has range of +- 95 degrees        
         // Calculate steering angle (-95 to 95, because the pot has 190 degrees of sweep after pulley ratio)
         // Pot centered on steering angle of 0
+        potVal -=95;
         steerAngle = potVal;
-        potVal-=95;
 
 // Calculate max speed
         if (maxSpeed<(GPS.speed*(1.15078+speedoCal))){

@@ -70,35 +70,54 @@
 	File logFile;
 
 // Initialize variables
+        // Calculated 
 	double camber = 0; 
 	double grade = 0;
         double averageGrade = 0;
 	double magHeading = 0;
+        double maxSpeed = 0;
+        double tripDistance = 0;
+        boolean brakesOn = false;
+
+        // BMP sensor
+        float seaLevelPressure = SENSORS_PRESSURE_SEALEVELHPA;       
+        float alt=0, vio=0;
 	float temperature = 0;
 	float bmpAltitude = 0;
-        double steerAngle = 0;  
-        double maxSpeed = 0;
+        
+        // Analog inputs
+        int potVal = 0;
+        int buttonState = 0;
+        int steerAngle = 0;  
+ 
+        // Distance       
         float lastLat = 0;
         float lastLon = 0;
         float origLat = 0;
         float origLon = 0;
         float origAlt = 0;
-        double tripDistance = 0;
-        double speedoCal = .18;
-        double potVal = 0;
-        int buttonState = 0;
-        boolean brakesOn = false;
+        
+        // Calibrate and sync
 	boolean runOnce = false;
-        boolean firstMove = false;             
+        boolean firstMove = false;   
+        double speedoCal = .18;
+        
+        // IMU      
+        // From http://www.tkjelectronics.com
+        Kalman kalmanX; 
+        Kalman kalmanY;
         double accX, accY, accZ;
         double gyroX, gyroY, gyroZ;
         int tempRaw;
         long timer, timer2;      
         double gyroXangle, gyroYangle; 
         double kalRoll, kalPitch; 
-        float seaLevelPressure = SENSORS_PRESSURE_SEALEVELHPA;       
-        float alt=0, vio=0;
+
+        // Lights
+        Adafruit_NeoPixel pixels = Adafruit_NeoPixel(numPixels, ledPin, NEO_GRB + NEO_KHZ800);
         long previousMillis=0;
+        
+        // Low pass filter variables
         const float accelAlpha = 0.2;
         const float gyroAlpha = 0.2;
         const float magAlpha = 0.3;
@@ -111,14 +130,8 @@
         double fXm = 0;
         double fYm = 0;
         double fZm = 0;
-	Adafruit_NeoPixel pixels = Adafruit_NeoPixel(numPixels, ledPin, NEO_GRB + NEO_KHZ800);
-        
-// Create the Kalman instances
-// From http://www.tkjelectronics.com
-        Kalman kalmanX; 
-        Kalman kalmanY;
-        
-// Variables for smoothing. Raising numReadings makes smoothing more aggressive. 
+               
+        // Smoothing. Raising numReadings makes smoothing more aggressive. 
 	const int numGaReadings = 3;
 	const int numBaReadings = 3;
 	const int numGdReadings = 3;
@@ -150,7 +163,7 @@
 	int mhAverage = 0;                // the average
 	int tmAverage = 0;                // the average
 
-// Accel calibration for calculating G Force - using simple calibration method       
+        // Accel calibration for calculating G Force - using simple calibration method       
 	int xRawMin = -121.85;
 	int xRawMax = 121.85;
 	int yRawMin = -119.75;
@@ -626,7 +639,8 @@ void loop() {
         potVal = map(potVal, 0, 1023, 0, 190); // Potentiometer has range of +- 95 degrees        
         // Calculate steering angle (-95 to 95, because the pot has 190 degrees of sweep after pulley ratio)
         // Pot centered on steering angle of 0
-        steerAngle = (potVal-95);
+        steerAngle = potVal;
+        potVal-=95;
 
 // Calculate max speed
         if (maxSpeed<(GPS.speed*(1.15078+speedoCal))){

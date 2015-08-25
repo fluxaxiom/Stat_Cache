@@ -477,10 +477,6 @@ void loop() {
         bmp.getSensor(&bmp_sensor);
         bmp.getEvent(&bmp_event);
         
-// Read from the potentiometer and map 10 bit values to degrees        
-        potVal = analogRead(potPin);
-        potVal = map(potVal, 0, 1023, 0, 190); // Potentiometer has range of +- 95 degrees
-        
 // Low pass filter
         fXa = acc_event.acceleration.x * accelAlpha + (fXa * (1.0 - accelAlpha));
         fYa = acc_event.acceleration.y * accelAlpha + (fYa * (1.0 - accelAlpha));
@@ -624,8 +620,11 @@ void loop() {
 	caAverage = caTotal / numCaReadings;
 	mhAverage = mhTotal / numMhReadings;  
 	tmAverage = tmTotal / numTmReadings;
-        
-// Calculate steering angle (-95 to 95, because the pot has 190 degrees of sweep after pulley ratio)
+
+// Read from the potentiometer and map 10 bit values to degrees        
+        potVal = analogRead(potPin);
+        potVal = map(potVal, 0, 1023, 0, 190); // Potentiometer has range of +- 95 degrees        
+        // Calculate steering angle (-95 to 95, because the pot has 190 degrees of sweep after pulley ratio)
         // Pot centered on steering angle of 0
         steerAngle = (potVal-95);
 

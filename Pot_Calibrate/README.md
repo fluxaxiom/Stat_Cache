@@ -1,3 +1,3 @@
-## Stat Cache ## 
+## Stat Cache  
 
 Calibrating the potentiometer for steering angle involves finding the center of the pot and marking the pulley wheel. Be certain that the pulley wheel you have fabricated provides a 1:1 ratio (if not you will have to include your ratio in the potentiometer code). Run the Pot_Calibrate.ino sketch and open the serial monitor. Be sure that when you turn your wheel the correct angle is displayed. You can verify this with a protractor. If 0 is not on center adjust your pulley until it is. If the angle displayed is larger or smaller you will need to adjust the map values in the sketch and re-upload. Once you find map values that are accurate for your pot copy them into the ADM_Stat_Cache.ino sketch on line 636. 

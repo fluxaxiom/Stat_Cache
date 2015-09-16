@@ -1,22 +1,3 @@
-## Arduino Mega Datalogger for Video Sync - Stat Cache Beta ##
+## Stat Cache ## 
 
-This project code is for use with Arduino Mega, Adafruit Ultimate GPS Logging Shield, Adafruit 10 DOF Accelerometer Gyro Magnetometer Temperature and Barometric Pressure, Adafruit Neopixel Jewel, Analog Potentiometer, Analog Button.
-
-  ----> http://www.instructables.com/
-
-Check out the link above for tutorial and wiring diagram 
-
-This repository contains all dependent libraries as these have been modified from their original versions. 
-
-## What does this code do? ##
-
-The code runs on a sensor equipped Arduino Mega and writes data to an SD card. The code also contains control of an led light to aid in video sync.
-
-There are other uses for the project that I might explore, but right now its purpose is to sync data with video for the purpose of adding a HUD dashboard effect to motion sports videos. 
-
-## About this Project ##
-
-Written by Frank Appio.  
-BSD license, all text above must be included in any redistribution
-
-To download. click the **Download ZIP** in the right-hand column. 
+Calibrating the potentiometer for steering angle involves finding the center of the pot and marking the pulley wheel. Be certain that the pulley wheel you have fabricated provides a 1:1 ratio (if not you will have to include your ratio in the potentiometer code). Run the Pot_Calibrate.ino sketch and open the serial monitor. Be sure that when you turn your wheel the correct angle is displayed. You can verify this with a protractor. If 0 is not on center adjust your pulley until it is. If the angle displayed is larger or smaller you will need to adjust the map values in the sketch and re-upload. Once you find map values that are accurate for your pot copy them into the ADM_Stat_Cache.ino sketch on line 636. 

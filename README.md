@@ -14,13 +14,13 @@ This project code is for use with Arduino Mega, Adafruit Ultimate GPS Logging Sh
 
   ----> http://www.instructables.com/
 
-Check out the link above for tutorial and wiring diagram 
+Check out the link above for hardware tutorial and wiring diagram 
 
 ## This repository contains most dependent libraries as these have been modified from their original versions. However you WILL have to download and add these 2 libraries to the Stat Cache libraries folder in order for it to compile:##
 https://github.com/adafruit/Adafruit-GPS-Library
 https://github.com/adafruit/Adafruit_LSM303DLHC
 
-
+Calibrate using instructions in the calibration folders.
 
 
 ## About this Project ##

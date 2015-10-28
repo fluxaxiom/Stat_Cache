@@ -12,7 +12,7 @@ The intention is to sync the data captured by this device with video for the pur
 
 This project code is for use with Arduino Mega, Adafruit Ultimate GPS Logging Shield, Adafruit 10 DOF Accelerometer Gyro Magnetometer Temperature and Barometric Pressure, Adafruit Neopixel Jewel, Analog Potentiometer, Analog Button.
 
-  ----> http://www.instructables.com/
+  ----> http://www.instructables.com/id/Build-a-blackbox-datalogger-for-adding-on-screen-d/
 
 Check out the link above for hardware tutorial and wiring diagram 
 

@@ -1,7 +1,7 @@
 ## Stat Cache -- A black box datalogger for On Screen Display ## 
 
 This project code is for use with Arduino Mega, Adafruit Ultimate GPS Logging Shield, Adafruit 10 DOF Accelerometer Gyro Magnetometer Temperature and Barometric Pressure, Adafruit Neopixel Jewel, Analog Potentiometer, Analog Button.
-----> http://www.instructables.com/
+----> http://www.instructables.com/id/Build-a-blackbox-datalogger-for-adding-on-screen-d/
 Check out the link above for tutorial and wiring diagram
 
 ## This repository contains most dependent libraries as these have been modified from their original versions. However you WILL have to download and add these 2 libraries to the Stat Cache libraries folder in order for it to compile: ## 
